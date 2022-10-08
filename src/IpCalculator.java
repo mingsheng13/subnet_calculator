@@ -1,17 +1,44 @@
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class IpCalculator
 {
-    private final String inputIp;
-    private final String subnetMask;
+    private String inputIp;
+    private String subnetMask;
     private final char[][] networkID = new char[4][8];
     private String networkIdInDecimal;
     private String[] ip;
     private String[] mask;
 
-    public IpCalculator(String inputIp, String subnetMask) {
-        this.inputIp = inputIp;
-        this.subnetMask = subnetMask;
+    public IpCalculator()
+    {
+        System.out.println("Please enter ip address in the following format:\n192.168.159.1/24\n192.168.132.3/18\n192.156.3.6/20\n...");
+        System.out.print("Enter IP: ");
+        Scanner input = new Scanner(System.in);
+        String inputIp = input.nextLine();
+        inputProcess(inputIp);
+        calculate();
+        print();
+    }
+    public void inputProcess(String input)  //192.168.0.1/23
+    {
+        String[] tmp = input.split("/");
+        inputIp = tmp[0];
+        
+        int subnet = Integer.parseInt(tmp[1]);
+        char[][] subnetArrInChar = new char[4][8];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 8; j++) {
+                if(subnet >= 1)
+                {
+                    subnetArrInChar[i][j] = '1';
+                    subnet--;
+                }
+                else
+                    subnetArrInChar[i][j] = '0';
+            }
+        }
+        subnetMask = toDecimal(subnetArrInChar);
     }
 
     public String[] toBinary(String input)
@@ -43,6 +70,17 @@ public class IpCalculator
         }
         return arr;
     }
+    public String toDecimal(char[][] input)
+    {
+        String[] str = new String[4];
+        int[] arr = new int[4];
+        for (int i = 0; i < input.length; i++)
+        {
+            str[i] = String.valueOf(input[i]);
+            arr[i] = Integer.parseInt(str[i], 2);
+        }
+        return Arrays.toString(arr).replace(",",".").replace("[","").replace("]","").replace(" ","");
+    }
     public void calculate()
     {
         ip = toBinary(inputIp);
@@ -63,17 +101,8 @@ public class IpCalculator
         }
         networkIdInDecimal = toDecimal(networkID);
 
-    }
-    public String toDecimal(char[][] input)
-    {
-        String[] str = new String[4];
-        int[] arr = new int[4];
-        for (int i = 0; i < input.length; i++)
-        {
-            str[i] = String.valueOf(input[i]);
-            arr[i] = Integer.parseInt(str[i], 2);
-        }
-        return Arrays.toString(arr).replace(",",".").replace("[","").replace("]","").replace(" ","");
+
+
     }
     public void print()
     {
@@ -95,8 +124,7 @@ public class IpCalculator
 
     public static void main(String[] args)
     {
-        IpCalculator ip1 = new IpCalculator("1.1.1.1", "255.0.0.0");
-        ip1.calculate();
-        ip1.print();
+        System.out.println();
+        IpCalculator ip1 = new IpCalculator();
     }
 }

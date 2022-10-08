@@ -77,7 +77,7 @@ public class IpCalculator
     }
     public void print()
     {
-        System.out.println("IP: \t\t\t"+ inputIp);
+        System.out.println("IP: \t\t"+ inputIp);
         System.out.print("IP in binary: \t");
         for (int i = 0; i < 4; i++)
         {

@@ -9,6 +9,10 @@ public class IpCalculator
     private String networkIdInDecimal;
     private String[] ip;
     private String[] mask;
+    private String minId;
+    private String maxId;
+    private String broadcastId;
+    private int total_hostId;
 
     public IpCalculator()
     {
@@ -88,7 +92,7 @@ public class IpCalculator
         char[][] ipInCharArr = toChar(ip);
         char[][] maskInCharArr = toChar(mask);
 
-        //bit-wise AND
+        //bitwise AND
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 8; j++)
@@ -101,9 +105,41 @@ public class IpCalculator
         }
         networkIdInDecimal = toDecimal(networkID);
 
-
+        //min id
+        networkID[3][7] = '1';
+        minId = toDecimal(networkID);
+        //broadcast id
+        int iFlag = 0, jFlag = 0;
+        boolean b = false;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 8; j++) {
+                if(maskInCharArr[i][j] == '0')
+                {
+                    iFlag = i;
+                    jFlag = j;
+                    b = true;
+                    break;
+                }
+            }
+            if(b)
+                break;
+        }
+        boolean startOne = false;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 8; j++) {
+                if(i == iFlag && j == jFlag)
+                    startOne =true;
+                if(startOne)
+                    networkID[i][j] = '1';
+            }
+        }
+        broadcastId = toDecimal(networkID);
+        //max id
+        networkID[3][7] = '0';
+        maxId = toDecimal(networkID);
 
     }
+
     public void print()
     {
         System.out.println("IP: \t\t"+ inputIp);
@@ -120,6 +156,9 @@ public class IpCalculator
         }
         System.out.println();
         System.out.println("Network ID: \t"+networkIdInDecimal);
+        System.out.println("Broadcast ID: \t"+broadcastId);
+        System.out.println("Min ID: \t"+minId);
+        System.out.println("Max id: \t"+maxId);
     }
 
     public static void main(String[] args)
